@@ -40,14 +40,17 @@ const LeagueTable = () => {
   };
 
   // Function to Edit a Team: Shows how to handle updates (PUT/PATCH) using Axios.
+
+
   const handleEdit = async (id, updatedTeam) => {
     try {
-      const response = await axios.post('/updateData', { Team: updatedTeam.Team, newData: updatedTeam });
+      const response = await axios.post('/updateData', { id: id, newData: updatedTeam });
       setData(data.map(item => item._id === id ? response.data : item));
     } catch (error) {
       console.error('Failed to update team', error);
     }
   };
+  
 
   // Function to Delete a Team: Implements a DELETE request using Axios.
   const handleDelete = async (teamId) => {

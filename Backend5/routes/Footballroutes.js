@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router()
 const Football = require('../Modles/Football')
 
-
+ /* displaying all data */
 router.get('/teams', async (req, res) => {
     try {
         const allTeams = await Football.find({});
@@ -12,7 +12,7 @@ router.get('/teams', async (req, res) => {
     }
 });
 
-
+ /* adding new  data */
 
 router.post('/addData', async (req, res) => {
     try {
@@ -27,25 +27,32 @@ router.post('/addData', async (req, res) => {
     }
   });
   
-  router.post('/updateData', async (req, res) => {
+
+/* to update data */
+router.post('/updateData', async (req, res) => {
     try {
-      const { Team, newData } = req.body; // Assuming request body contains the team and updated data
+      const { id, newData } = req.body; // Use a unique identifier like _id
       const result = await Football.findOneAndUpdate(
-        { Team: Team }, // Assuming Team is the field you're matching on
-        { $set: newData }, // Wrap the updated data in $set
-        { new: true,  }
+        { _id: id }, // Find the document by _id
+        { $set: newData }, // Update all fields including Team
+        { new: true }
       );
+
+      if(!result) {
+        return res.status(404).json({ message: 'Team not found' });
+      }
+
       res.json(result);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-  
 });
 
 
 
 
 
+/* deleting data */
 router.delete('/deleteData/:id', async (req, res) => {
     try {
       const teamId = req.params.id;
@@ -61,14 +68,14 @@ router.delete('/deleteData/:id', async (req, res) => {
 });
 
 
-
+/* displaying  total game played win loss... by Team*/
 
  router.get('/stat/:Team', async (req, res) => {
     try {
         const team = req.params.Team;
         let matchQuery = { Team: team };
 
-        // Check if there is a 'year' query parameter and modify the match query
+        
         if(req.query.year) {
             matchQuery.Year = parseInt(req.query.year);
         }
@@ -105,7 +112,7 @@ router.delete('/deleteData/:id', async (req, res) => {
 
 
 
-
+/* displaying  total game played win loss... by year*/
 
 router.get('/stats/:Year', async (req, res) => {
     try {
@@ -150,7 +157,7 @@ router.get('/stats/:Year', async (req, res) => {
 
 
 
-
+/* displaying toal avegra ge goal  game played ....s... by year*/
 
 router.get('/AverageGoal/:Year', async (req, res) => {
     try {
@@ -184,6 +191,8 @@ router.get('/AverageGoal/:Year', async (req, res) => {
     }
 });
 
+
+/* displaying displaying team by won.*/
 
 router.get('/teamsbyWon/:wins', async (req, res) => {
     try {
